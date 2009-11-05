@@ -131,7 +131,7 @@
 
   (element-catalog
    (= eq)
-   (/ devide)
+   (/ divide)
    (max)
    (min)
    (- minus)
