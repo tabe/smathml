@@ -1,8 +1,9 @@
-SCHEME = ypsilon --sitelib=.
+SCHEME = ypsilon --sitelib=sitelib
 
 .PHONY: check test
 
 check: test
 
 test:
-	$(SCHEME) test.scm
+	$(SCHEME) tests/smathml/content.scm
+	$(SCHEME) tests/smathml.scm

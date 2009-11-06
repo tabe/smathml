@@ -1,6 +1,6 @@
 #!r6rs
 
-(import (rnrs)
+(import (rnrs (6))
         (smathml)
         (xunit))
 

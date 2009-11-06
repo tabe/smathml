@@ -36,7 +36,7 @@
           smathml?
           smathml->string
           write-smathml)
-  (import (rnrs))
+  (import (rnrs (6)))
 
   (define-record-type smathml
     (fields tree prefix))
