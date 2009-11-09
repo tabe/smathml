@@ -114,14 +114,20 @@
        (m:binary-operator (prefix) min left right))
       ((_ (minus left right) prefix)
        (m:binary-operator (prefix) minus left right))
+      ((_ (minus e0 e1 e2 ...) prefix)
+       (mathml (minus (minus e0 e1) e2 ...) prefix))
       ((_ (plus left right) prefix)
        (m:binary-operator (prefix) plus left right))
+      ((_ (plus e0 e1 e2 ...) prefix)
+       (mathml (plus (plus e0 e1) e2 ...) prefix))
       ((_ (power left right) prefix)
        (m:binary-operator (prefix) power left right))
       ((_ (rem left right) prefix)
        (m:binary-operator (prefix) rem left right))
       ((_ (times left right) prefix)
        (m:binary-operator (prefix) times left right))
+      ((_ (times e0 e1 e2 ...) prefix)
+       (mathml (times (times e0 e1) e2 ...) prefix))
       ((_ (diff (bvar v) rest ...) prefix)
        (m:apply
         (prefix)
@@ -194,14 +200,16 @@
        (lset-union eq?
                    (free-variables left)
                    (free-variables right)))
-      ((_ (minus left right))
+      ((_ (minus e0 e1 ...))
        (lset-union eq?
-                   (free-variables left)
-                   (free-variables right)))
-      ((_ (plus left right))
+                   (free-variables e0)
+                   (free-variables e1)
+                   ...))
+      ((_ (plus e0 e1 ...))
        (lset-union eq?
-                   (free-variables left)
-                   (free-variables right)))
+                   (free-variables e0)
+                   (free-variables e1)
+                   ...))
       ((_ (power left right))
        (lset-union eq?
                    (free-variables left)
@@ -210,10 +218,11 @@
        (lset-union eq?
                    (free-variables left)
                    (free-variables right)))
-      ((_ (times left right))
+      ((_ (times e0 e1 ...))
        (lset-union eq?
-                   (free-variables left)
-                   (free-variables right)))
+                   (free-variables e0)
+                   (free-variables e1)
+                   ...))
       ((_ (diff (bvar v) rest ...))
        (lset-difference eq?
                         (lset-union eq?
