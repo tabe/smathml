@@ -31,8 +31,10 @@
 (library (smathml content)
   (export mathml
           write-tree
-          tree->string)
-  (import (rnrs (6)))
+          tree->string
+          free-variables)
+  (import (rnrs (6))
+          (only (srfi :1) lset-difference lset-union))
 
   (define-syntax m:<
     (syntax-rules ()
@@ -163,5 +165,73 @@
     (call-with-string-output-port
      (lambda (port)
        (write-tree tree port))))
+
+  (define-syntax free-variables
+    (syntax-rules (bvar
+                   diff
+                   divide
+                   eq
+                   max
+                   min
+                   minus
+                   plus
+                   power
+                   rem
+                   times)
+      ((_ (eq left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (divide left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (max left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (min left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (minus left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (plus left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (power left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (rem left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (times left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (diff (bvar v) rest ...))
+       (lset-difference eq?
+                        (lset-union eq?
+                                    (free-variables rest)
+                                    ...)
+                        '(v)))
+      ((_ (diff rest ...))
+       (lset-union eq? (free-variables rest) ...))
+      ;; just apply
+      ((_ (f arg ...))
+       (lset-union eq?
+                   (free-variables f)
+                   (free-variables arg)
+                   ...))
+      ;; 
+      ((_ x)
+       (if (number? 'x)
+           '()
+           '(x)))))
 
 )
