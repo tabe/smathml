@@ -21,6 +21,10 @@
 
 (assert-mathml "<apply><eq/><ci>X</ci><cn>1</cn></apply>" (eq X 1))
 (assert-mathml "<m:apply><m:eq/><m:ci>X</m:ci><m:cn>1</m:cn></m:apply>" (eq X 1) 'm)
+(assert-mathml "<m:apply><m:lt/><m:ci>X</m:ci><m:cn>1</m:cn></m:apply>" (lt X 1) 'm)
+(assert-mathml "<m:apply><m:leq/><m:ci>X</m:ci><m:cn>1</m:cn></m:apply>" (leq X 1) 'm)
+(assert-mathml "<m:apply><m:gt/><m:ci>X</m:ci><m:cn>1</m:cn></m:apply>" (gt X 1) 'm)
+(assert-mathml "<m:apply><m:geq/><m:ci>X</m:ci><m:cn>1</m:cn></m:apply>" (geq X 1) 'm)
 (assert-mathml "<apply><diff/><bvar><ci>x</ci></bvar><ci>f</ci></apply>" (diff (bvar x) f))
 (assert-mathml "<m:apply><m:diff/><m:bvar><m:ci>x</m:ci></m:bvar><m:ci>f</m:ci></m:apply>" (diff (bvar x) f) 'm)
 (assert-mathml "<apply><diff/><apply><diff/><ci>f</ci></apply></apply>" (diff (diff f)))
@@ -31,6 +35,10 @@
 (assert-mathml "<m:apply><m:times/><m:apply><m:times/><m:ci>A</m:ci><m:ci>B</m:ci></m:apply><m:ci>C</m:ci></m:apply>" (times A B C) 'm)
 
 (assert-free-variables '(X) (eq X 1))
+(assert-free-variables '(X) (lt X 1))
+(assert-free-variables '(X) (leq X 1))
+(assert-free-variables '(X) (gt X 1))
+(assert-free-variables '(X) (geq X 1))
 (assert-free-variables '(f) (diff (bvar x) f))
 (assert-free-variables '(f) (diff (diff f)))
 (assert-free-variables '(f x y) (f x y))

@@ -97,6 +97,10 @@
                    diff
                    divide
                    eq
+                   geq
+                   gt
+                   leq
+                   lt
                    max
                    min
                    minus
@@ -106,6 +110,14 @@
                    times)
       ((_ (eq left right) prefix)
        (m:binary-operator (prefix) eq left right))
+      ((_ (lt left right) prefix)
+       (m:binary-operator (prefix) lt left right))
+      ((_ (leq left right) prefix)
+       (m:binary-operator (prefix) leq left right))
+      ((_ (gt left right) prefix)
+       (m:binary-operator (prefix) gt left right))
+      ((_ (geq left right) prefix)
+       (m:binary-operator (prefix) geq left right))
       ((_ (divide left right) prefix)
        (m:binary-operator (prefix) divide left right))
       ((_ (max left right) prefix)
@@ -177,6 +189,10 @@
                    diff
                    divide
                    eq
+                   geq
+                   gt
+                   leq
+                   lt
                    max
                    min
                    minus
@@ -185,6 +201,22 @@
                    rem
                    times)
       ((_ (eq left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (lt left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (leq left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (gt left right))
+       (lset-union eq?
+                   (free-variables left)
+                   (free-variables right)))
+      ((_ (geq left right))
        (lset-union eq?
                    (free-variables left)
                    (free-variables right)))
