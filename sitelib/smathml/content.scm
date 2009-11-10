@@ -30,6 +30,7 @@
 
 (library (smathml content)
   (export mathml
+          smathml
           write-tree
           tree->string
           free-variables)
@@ -170,6 +171,93 @@
       ;;
       ((_ x)
        (mathml x #f))))
+
+  (define-syntax :
+    (syntax-rules ()
+      ((: prefix e)
+       (string->symbol
+        (string-append
+         (symbol->string 'prefix)
+         ":"
+         (symbol->string 'e))))))
+
+  (define-syntax smathml:apply
+    (syntax-rules ()
+      ((_ (prefix) f arg ...)
+       `(,(: prefix apply)
+         (,(: prefix f))
+         ,(smathml arg prefix)
+         ...))))
+
+  (define-syntax smathml
+    (syntax-rules (bvar
+                   diff
+                   divide
+                   eq
+                   geq
+                   gt
+                   leq
+                   lt
+                   max
+                   min
+                   minus
+                   plus
+                   power
+                   rem
+                   times)
+      ((_ (eq left right) prefix)
+       (smathml:apply (prefix) eq left right))
+      ((_ (lt left right) prefix)
+       (smathml:apply (prefix) lt left right))
+      ((_ (leq left right) prefix)
+       (smathml:apply (prefix) leq left right))
+      ((_ (gt left right) prefix)
+       (smathml:apply (prefix) gt left right))
+      ((_ (geq left right) prefix)
+       (smathml:apply (prefix) geq left right))
+      ((_ (divide left right) prefix)
+       (smathml:apply (prefix) divide left right))
+      ((_ (max left right) prefix)
+       (smathml:apply (prefix) max left right))
+      ((_ (min left right) prefix)
+       (smathml:apply (prefix) min left right))
+      ((_ (minus left right) prefix)
+       (smathml:apply (prefix) minus left right))
+      ((_ (minus e0 e1 e2 ...) prefix)
+       (smathml (minus (minus e0 e1) e2 ...) prefix))
+      ((_ (plus left right) prefix)
+       (smathml:apply (prefix) plus left right))
+      ((_ (plus e0 e1 e2 ...) prefix)
+       (smathml (plus (plus e0 e1) e2 ...) prefix))
+      ((_ (power left right) prefix)
+       (smathml:apply (prefix) power left right))
+      ((_ (rem left right) prefix)
+       (smathml:apply (prefix) rem left right))
+      ((_ (times left right) prefix)
+       (smathml:apply (prefix) times left right))
+      ((_ (times e0 e1 e2 ...) prefix)
+       (smathml (times (times e0 e1) e2 ...) prefix))
+      ((_ (diff (bvar v) rest ...) prefix)
+       `(,(: prefix apply)
+         (,(: prefix diff))
+         (,(: prefix bvar)
+          (,(: prefix ci)
+           v))
+         ,(smathml rest prefix)
+         ...))
+      ((_ (diff rest ...) prefix)
+       (smathml:apply (prefix) diff rest ...))
+      ;; just apply
+      ((_ (f arg ...) prefix)
+       `(,(: prefix apply)
+         (,(: prefix ci) f)
+         ,(smathml arg prefix)
+         ...))
+      ;; cn & ci
+      ((_ x prefix)
+       (if (number? 'x)
+           `(,(: prefix cn) x)
+           `(,(: prefix ci) x)))))
 
   (define (write-tree tree port)
     (cond ((list? tree)
