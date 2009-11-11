@@ -241,8 +241,7 @@
        `(,(: prefix apply)
          (,(: prefix diff))
          (,(: prefix bvar)
-          (,(: prefix ci)
-           v))
+          (,(: prefix ci) ,(symbol->string 'v)))
          ,(smathml rest prefix)
          ...))
       ((_ (diff rest ...) prefix)
@@ -250,14 +249,14 @@
       ;; just apply
       ((_ (f arg ...) prefix)
        `(,(: prefix apply)
-         (,(: prefix ci) f)
+         (,(: prefix ci) ,(symbol->string 'f))
          ,(smathml arg prefix)
          ...))
       ;; cn & ci
       ((_ x prefix)
        (if (number? 'x)
-           `(,(: prefix cn) x)
-           `(,(: prefix ci) x)))))
+           `(,(: prefix cn) ,(number->string 'x))
+           `(,(: prefix ci) ,(symbol->string 'x))))))
 
   (define (write-tree tree port)
     (cond ((list? tree)
