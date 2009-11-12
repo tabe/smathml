@@ -38,6 +38,7 @@
 (assert-mathml "<m:apply><m:minus/><m:apply><m:minus/><m:ci>A</m:ci><m:ci>B</m:ci></m:apply><m:ci>C</m:ci></m:apply>" (minus A B C) 'm)
 (assert-mathml "<m:apply><m:plus/><m:apply><m:plus/><m:ci>A</m:ci><m:ci>B</m:ci></m:apply><m:ci>C</m:ci></m:apply>" (plus A B C) 'm)
 (assert-mathml "<m:apply><m:times/><m:apply><m:times/><m:ci>A</m:ci><m:ci>B</m:ci></m:apply><m:ci>C</m:ci></m:apply>" (times A B C) 'm)
+(assert-mathml "<m:apply><m:eq/><m:apply><m:ln/><m:exponentiale/></m:apply><m:cn>1</m:cn></m:apply>" (eq (ln exponentiale) 1) 'm)
 
 (assert-smathml '(m:apply (m:eq) (m:ci "X") (m:cn "1")) (eq X 1) m)
 (assert-smathml '(m:apply (m:lt) (m:ci "X") (m:cn "1")) (lt X 1) m)
@@ -50,6 +51,7 @@
 (assert-smathml '(m:apply (m:minus) (m:apply (m:minus) (m:ci "A") (m:ci "B")) (m:ci "C")) (minus A B C) m)
 (assert-smathml '(m:apply (m:plus) (m:apply (m:plus) (m:ci "A") (m:ci "B")) (m:ci "C")) (plus A B C) m)
 (assert-smathml '(m:apply (m:times) (m:apply (m:times) (m:ci "A") (m:ci "B")) (m:ci "C")) (times A B C) m)
+(assert-smathml '(m:apply (m:eq)(m:apply (m:ln) (m:exponentiale)) (m:cn "1")) (eq (ln exponentiale) 1) m)
 
 (assert-free-variables '(X) (eq X 1))
 (assert-free-variables '(X) (lt X 1))
@@ -62,5 +64,6 @@
 (assert-free-variables '(A B C) (minus A B C))
 (assert-free-variables '(A B C) (plus A B C))
 (assert-free-variables '(A B C) (times A B C))
+(assert-free-variables '() (eq (ln exponentiale) 1))
 
 (report)

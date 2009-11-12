@@ -98,9 +98,11 @@
                    diff
                    divide
                    eq
+                   exponentiale
                    geq
                    gt
                    leq
+                   ln
                    lt
                    max
                    min
@@ -121,6 +123,11 @@
        (m:binary-operator (prefix) geq left right))
       ((_ (divide left right) prefix)
        (m:binary-operator (prefix) divide left right))
+      ((_ (ln arg) prefix)
+       (m:apply
+        (prefix)
+        (m:</> (prefix) ln)
+        (mathml arg prefix)))
       ((_ (max left right) prefix)
        (m:binary-operator (prefix) max left right))
       ((_ (min left right) prefix)
@@ -163,6 +170,9 @@
         (m:ci (prefix) f)
         (mathml arg prefix)
         ...))
+      ;; Constant and Symbol Elements
+      ((_ exponentiale prefix)
+       (m:</> (prefix) exponentiale))
       ;; cn & ci
       ((_ x prefix)
        (if (number? 'x)
@@ -194,9 +204,11 @@
                    diff
                    divide
                    eq
+                   exponentiale
                    geq
                    gt
                    leq
+                   ln
                    lt
                    max
                    min
@@ -217,6 +229,8 @@
        (smathml:apply (prefix) geq left right))
       ((_ (divide left right) prefix)
        (smathml:apply (prefix) divide left right))
+      ((_ (ln arg) prefix)
+       (smathml:apply (prefix) ln arg))
       ((_ (max left right) prefix)
        (smathml:apply (prefix) max left right))
       ((_ (min left right) prefix)
@@ -252,6 +266,9 @@
          (,(: prefix ci) ,(symbol->string 'f))
          ,(smathml arg prefix)
          ...))
+      ;; Constant and Symbol Elements
+      ((_ exponentiale prefix)
+       `(,(: prefix exponentiale)))
       ;; cn & ci
       ((_ x prefix)
        (if (number? 'x)
@@ -276,9 +293,11 @@
                    diff
                    divide
                    eq
+                   exponentiale
                    geq
                    gt
                    leq
+                   ln
                    lt
                    max
                    min
@@ -311,6 +330,8 @@
        (lset-union eq?
                    (free-variables left)
                    (free-variables right)))
+      ((_ (ln arg))
+       (free-variables arg))
       ((_ (max left right))
        (lset-union eq?
                    (free-variables left)
@@ -356,6 +377,9 @@
                    (free-variables f)
                    (free-variables arg)
                    ...))
+      ;; Constant and Symbol Elements
+      ((_ exponentiale)
+       '())
       ;; 
       ((_ x)
        (if (number? 'x)
