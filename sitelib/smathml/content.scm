@@ -29,158 +29,10 @@
 ;;   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (library (smathml content)
-  (export mathml
-          smathml
-          write-tree
-          tree->string
+  (export smathml
           free-variables)
   (import (rnrs (6))
           (only (srfi :1) lset-difference lset-union))
-
-  (define-syntax m:<
-    (syntax-rules ()
-      ((_ (prefix) name)
-       (if prefix
-           `(#\< ,prefix #\: name #\>)
-           `(#\< name #\>)))))
-
-  (define-syntax m:/>
-    (syntax-rules ()
-      ((_ (prefix) name)
-       (if prefix
-           `("</" ,prefix #\: name #\>)
-           `("</" name #\>)))))
-
-  (define-syntax m:</>
-    (syntax-rules ()
-      ((_ (prefix) name)
-       (if prefix
-           `(#\< ,prefix #\: name "/>")
-           `(#\< name "/>")))))
-
-  (define-syntax m:ci
-    (syntax-rules ()
-      ((_ (prefix) identifier)
-       `(,(m:< (prefix) ci)
-         identifier
-         ,(m:/> (prefix) ci)))))
-
-  (define-syntax m:cn
-    (syntax-rules ()
-      ((_ (prefix) n)
-       `(,(m:< (prefix) cn)
-         n
-         ,(m:/> (prefix) cn)))))
-
-  (define-syntax m:apply
-    (syntax-rules ()
-      ((_ (prefix) child ...)
-       `(,(m:< (prefix) apply)
-         ,child ...
-         ,(m:/> (prefix) apply)))))
-
-  (define-syntax m:nary-operator
-    (syntax-rules ()
-      ((_ (prefix) name arg ...)
-       (m:apply
-        (prefix)
-        (m:</> (prefix) name)
-        (mathml arg prefix)
-        ...))))
-
-  (define-syntax m:binary-operator
-    (syntax-rules ()
-      ((_ (prefix) name left right)
-       (m:nary-operator (prefix) name left right))))
-
-  (define-syntax mathml
-    (syntax-rules (bvar
-                   diff
-                   divide
-                   eq
-                   exponentiale
-                   geq
-                   gt
-                   leq
-                   ln
-                   lt
-                   max
-                   min
-                   minus
-                   plus
-                   power
-                   rem
-                   times)
-      ((_ (eq left right) prefix)
-       (m:binary-operator (prefix) eq left right))
-      ((_ (lt left right) prefix)
-       (m:binary-operator (prefix) lt left right))
-      ((_ (leq left right) prefix)
-       (m:binary-operator (prefix) leq left right))
-      ((_ (gt left right) prefix)
-       (m:binary-operator (prefix) gt left right))
-      ((_ (geq left right) prefix)
-       (m:binary-operator (prefix) geq left right))
-      ((_ (divide left right) prefix)
-       (m:binary-operator (prefix) divide left right))
-      ((_ (ln arg) prefix)
-       (m:apply
-        (prefix)
-        (m:</> (prefix) ln)
-        (mathml arg prefix)))
-      ((_ (max left right) prefix)
-       (m:binary-operator (prefix) max left right))
-      ((_ (min left right) prefix)
-       (m:binary-operator (prefix) min left right))
-      ((_ (minus left right) prefix)
-       (m:binary-operator (prefix) minus left right))
-      ((_ (minus e0 e1 e2 ...) prefix)
-       (mathml (minus (minus e0 e1) e2 ...) prefix))
-      ((_ (plus left right) prefix)
-       (m:binary-operator (prefix) plus left right))
-      ((_ (plus e0 e1 e2 ...) prefix)
-       (mathml (plus (plus e0 e1) e2 ...) prefix))
-      ((_ (power left right) prefix)
-       (m:binary-operator (prefix) power left right))
-      ((_ (rem left right) prefix)
-       (m:binary-operator (prefix) rem left right))
-      ((_ (times left right) prefix)
-       (m:binary-operator (prefix) times left right))
-      ((_ (times e0 e1 e2 ...) prefix)
-       (mathml (times (times e0 e1) e2 ...) prefix))
-      ((_ (diff (bvar v) rest ...) prefix)
-       (m:apply
-        (prefix)
-        (m:</> (prefix) diff)
-        (m:< (prefix) bvar)
-        (m:ci (prefix) v)
-        (m:/> (prefix) bvar)
-        (mathml rest prefix)
-        ...))
-      ((_ (diff rest ...) prefix)
-       (m:apply
-        (prefix)
-        (m:</> (prefix) diff)
-        (mathml rest prefix)
-        ...))
-      ;; just apply
-      ((_ (f arg ...) prefix)
-       (m:apply
-        (prefix)
-        (m:ci (prefix) f)
-        (mathml arg prefix)
-        ...))
-      ;; Constant and Symbol Elements
-      ((_ exponentiale prefix)
-       (m:</> (prefix) exponentiale))
-      ;; cn & ci
-      ((_ x prefix)
-       (if (number? 'x)
-           (m:cn (prefix) x)
-           (m:ci (prefix) x)))
-      ;;
-      ((_ x)
-       (mathml x #f))))
 
   (define-syntax :
     (syntax-rules ()
@@ -274,19 +126,6 @@
        (if (number? 'x)
            `(,(: prefix cn) ,(number->string 'x))
            `(,(: prefix ci) ,(symbol->string 'x))))))
-
-  (define (write-tree tree port)
-    (cond ((list? tree)
-           (for-each
-            (lambda (x) (write-tree x port))
-            tree))
-          (else
-           (display tree port))))
-
-  (define (tree->string tree)
-    (call-with-string-output-port
-     (lambda (port)
-       (write-tree tree port))))
 
   (define-syntax free-variables
     (syntax-rules (bvar
