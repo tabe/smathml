@@ -1,6 +1,6 @@
 #!r6rs
 
-(import (rnrs (6))
+(import (except (rnrs (6)) lambda)
         (only (srfi :1) lset=)
         (smathml content)
         (xunit))
@@ -17,6 +17,23 @@
     ((_ expected tree)
      (assert-lset= eq? expected (free-variables tree)))))
 
+(assert-smathml '(m:apply (m:interval) (m:cn "0") (m:cn "1")) (interval 0 1) m)
+(assert-smathml '(m:apply (m:inverse) (m:ci "f")) (inverse f) m)
+(assert-smathml '(m:condition (m:apply (m:eq) (m:ci "X") (m:cn "1"))) (condition (eq X 1)) m)
+(assert-smathml '(m:declare (m:ci "V") (m:vector (m:cn "1") (m:cn "2") (m:cn "3"))) (declare V (vector 1 2 3)) m)
+(assert-smathml '(m:lambda (m:bvar (m:ci "x")) (m:apply (m:plus) (m:ci "x") (m:cn "1"))) (lambda (x) (plus x 1)) m)
+(assert-smathml '(m:apply (m:compose) (m:ci "f") (m:ci "g")) (compose f g) m)
+(assert-smathml '(m:ident) ident m)
+(assert-smathml '(m:apply (m:domain) (m:ci "f")) (domain f) m)
+(assert-smathml '(m:apply (m:codomain) (m:ci "f")) (codomain f) m)
+(assert-smathml '(m:apply (m:image) (m:ci "f")) (image f) m)
+(assert-smathml '(m:domainofapplication (m:ci "C")) (domainofapplication C) m)
+(assert-smathml '(m:piecewise
+                  (m:piece (m:cn "0")
+                           (m:apply (m:lt) (m:ci "x") (m:cn "0")))
+                  (m:otherwise (m:ci "x")))
+                (piecewise (0 (lt x 0)) (x))
+                m)
 (assert-smathml '(m:apply (m:eq) (m:ci "X") (m:cn "1")) (eq X 1) m)
 (assert-smathml '(m:apply (m:lt) (m:ci "X") (m:cn "1")) (lt X 1) m)
 (assert-smathml '(m:apply (m:leq) (m:ci "X") (m:cn "1")) (leq X 1) m)
