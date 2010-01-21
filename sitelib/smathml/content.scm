@@ -1,5 +1,5 @@
 ;;
-;;   Copyright (c) 2009 Takeshi Abe. All rights reserved.
+;;   Copyright (c) 2009,2010 Takeshi Abe. All rights reserved.
 ;;
 ;;   Redistribution and use in source and binary forms, with or without
 ;;   modification, are permitted provided that the following conditions
@@ -84,7 +84,7 @@
          ,(smathml x prefix)
          ...))))
 
-  ;; completed implicitly:
+  ;; to be completed implicitly:
   ;; - apply
   ;; - sep
   (define-syntax smathml
