@@ -31,8 +31,7 @@
 (library (smathml content)
   (export smathml
           free-variables)
-  (import (rnrs (6))
-          (only (srfi :1) lset-difference lset-union))
+  (import (rnrs (6)))
 
   (define-syntax :
     (syntax-rules ()
@@ -598,10 +597,34 @@
            `(,(: prefix cn) ,(number->string 'x))
            `(,(: prefix ci) ,(symbol->string 'x))))))
 
+  ;; SRFI-1 lset-union with eq?
+  (define (%union . args)
+    (if (null? args)
+        '()
+        (let loop ((a (car args))
+                   (rest (cdr args)))
+          (cond ((null? rest) a)
+                ((null? a) (apply %union rest))
+                (else
+                 (let ((b (car rest)))
+                   (loop
+                    (fold-left (lambda (x v) (if (memq v x) x (cons v x))) a b)
+                    (cdr rest))))))))
+
+  ;; SRFI-1 lset-difference with eq?
+  (define (%difference a . args)
+    (let loop ((a a)
+               (rest args))
+      (cond ((null? a) '())
+            ((null? rest) a)
+            (else
+             (loop (filter (lambda (v) (not (memq v (car rest)))) a)
+                   (cdr rest))))))
+
   (define-syntax free-variables-union
     (syntax-rules ()
       ((_ x y ...)
-       (lset-union eq? (free-variables x) (free-variables y) ...))
+       (%union (free-variables x) (free-variables y) ...))
       ((_)
        '())))
 
@@ -755,9 +778,8 @@
       ((_ (:declare e0 e1 ...))
        '())
       ((_ (:lambda (x ...) expr))
-       (lset-difference eq?
-                        (free-variables expr)
-                        '(x ...)))
+       (%difference (free-variables expr)
+                    '(x ...)))
       ((_ (:compose f0 ...))
        (free-variables-union f0 ...))
       ((_ :ident)
@@ -771,10 +793,9 @@
       ((_ (:domainofapplication x))
        (free-variables x))
       ((_ (:piecewise c0 c1 ...))
-       (lset-union eq?
-                   (free-variables-piece c0)
-                   (free-variables-piece c1)
-                   ...))
+       (%union (free-variables-piece c0)
+               (free-variables-piece c1)
+               ...))
       ;; arithmetic, algebra and logic
       ((_ (:quotient left right))
        (free-variables-union left right))
@@ -813,13 +834,11 @@
       ((_ (:implies x y))
        (free-variables-union x y))
       ((_ (:forall (x y ...) z ...))
-       (lset-difference eq?
-                        (free-variables-union z ...)
-                        '(x y ...)))
+       (%difference (free-variables-union z ...)
+                    '(x y ...)))
       ((_ (:exists (x y ...) z ...))
-       (lset-difference eq?
-                        (free-variables-union z ...)
-                        '(x y ...)))
+       (%difference (free-variables-union z ...)
+                    '(x y ...)))
       ((_ (:abs x))
        (free-variables x))
       ((_ (:conjugate x))
@@ -857,21 +876,18 @@
        (free-variables-union x y))
      ;; calculus and vector calculus 
       ((_ (:int (v low up) x))
-       (lset-difference eq?
-                        (free-variables-union low up x)
-                        '(v)))
+       (%difference (free-variables-union low up x)
+                    '(v)))
       ((_ (:int (:bvar x) y ...))
-       (lset-difference eq?
-                        (free-variables y ...)
-                        '(x)))
+       (%difference (free-variables y ...)
+                    '(x)))
       ((_ (:int (low up) x))
        (free-variables-union low up x))
       ((_ (:int x))
        (free-variables x))
       ((_ (:diff (:bvar v) x))
-       (lset-difference eq?
-                        (free-variables x)
-                        '(v)))
+       (%difference (free-variables x)
+                    '(v)))
       ((_ (:diff x))
        (free-variables x))
       ((_ (:partialdiff x y))
@@ -886,27 +902,23 @@
        (free-variables x))
       ;; theory of sets
       ((_ (:set (:bvar v) c x))
-       (lset-difference eq?
-                        (free-variables-union c x)
-                        '(v)))
+       (%difference (free-variables-union c x)
+                    '(v)))
       ((_ (:set x ...))
        (free-variables-union x ...))
       ((_ (:list (:bvar v) c x))
-       (lset-difference eq?
-                        (free-variables-union c x)
-                        '(v)))
+       (%difference (free-variables-union c x)
+                    '(v)))
       ((_ (:list x ...))
        (free-variables-union x ...))
       ((_ (:union (:bvar s) c x))
-       (lset-difference eq?
-                        (free-variables-union c x)
-                        '(s)))
+       (%difference (free-variables-union c x)
+                    '(s)))
       ((_ (:union x y ...))
        (free-variables-union x y ...))
       ((_ (:intersect (:bvar s) c x))
-       (lset-difference eq?
-                        (free-variables-union c x)
-                        '(s)))
+       (%difference (free-variables-union c x)
+                    '(s)))
       ((_ (:intersect x y ...))
        (free-variables-union x y ...))
       ((_ (:in x y))
@@ -928,33 +940,27 @@
       ((_ (:cartesianproduct x y ...))
        (free-variables-union x y ...))
       ((_ (:sum (v lo hi) x))
-       (lset-difference eq?
-                        (free-variables-union lo hi x)
-                        '(v)))
+       (%difference (free-variables-union lo hi x)
+                    '(v)))
       ((_ (:sum (v c) x))
-       (lset-difference eq?
-                        (free-variables-union c x)
-                        '(v)))
+       (%difference (free-variables-union c x)
+                    '(v)))
       ((_ (:sum d x))
        (free-variables x))
       ((_ (:product (v lo hi) x))
-       (lset-difference eq?
-                        (free-variables-union lo hi x)
-                        '(v)))
+       (%difference (free-variables-union lo hi x)
+                    '(v)))
       ((_ (:product (v c) x))
-       (lset-difference eq?
-                        (free-variables-union c x)
-                        '(v)))
+       (%difference (free-variables-union c x)
+                    '(v)))
       ((_ (:product d x))
        (free-variables x))
       ((_ (:limit (v x) y))
-       (lset-difference eq?
-                        (free-variables-union x y)
-                        '(v)))
+       (%difference (free-variables-union x y)
+                    '(v)))
       ((_ (:limit v x y))
-       (lset-difference eq?
-                        (free-variables-union x y)
-                        '(v)))
+       (%difference (free-variables-union x y)
+                    '(v)))
       ((_ (:tendsto x y))
        (free-variables y))
       ((_ (:exp x))
