@@ -1,21 +1,21 @@
 #!r6rs
 
 (import (rnrs (6))
-        (only (srfi :1) lset=)
         (smathml content)
         (xunit))
-
-(define-assert-predicate lset=)
 
 (define-syntax assert-smathml
   (syntax-rules ()
     ((_ expected tree)
      (assert-equal? expected (smathml tree m)))))
 
+(define (symbol<? x y) (string<? (symbol->string x) (symbol->string y)))
+
 (define-syntax assert-free-variables
   (syntax-rules ()
     ((_ expected tree)
-     (assert-lset= eq? expected (free-variables tree)))))
+     (assert-equal? (list-sort symbol<? expected)
+                    (list-sort symbol<? (free-variables tree))))))
 
 (assert-smathml '(m:apply (m:interval) (m:cn "0") (m:cn "1"))
                 (:interval 0 1))
