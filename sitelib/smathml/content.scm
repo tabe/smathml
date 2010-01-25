@@ -36,11 +36,13 @@
   (define-syntax :
     (syntax-rules ()
       ((: prefix e)
-       (string->symbol
-        (string-append
-         (symbol->string 'prefix)
-         ":"
-         (symbol->string 'e))))))
+       (if (boolean? 'prefix)
+           'e
+           (string->symbol
+            (string-append
+             (symbol->string 'prefix)
+             ":"
+             (symbol->string 'e)))))))
 
   (define-syntax smathml:apply
     (syntax-rules ()
@@ -595,7 +597,10 @@
       ((_ x prefix)
        (if (number? 'x)
            `(,(: prefix cn) ,(number->string 'x))
-           `(,(: prefix ci) ,(symbol->string 'x))))))
+           `(,(: prefix ci) ,(symbol->string 'x))))
+      ;; no prefix
+      ((_ x)
+       (smathml x #f))))
 
   ;; SRFI-1 lset-union with eq?
   (define (%union . args)
