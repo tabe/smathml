@@ -65,7 +65,7 @@
   (define-syntax smathml:matrixrow
     (syntax-rules ()
       ((_ (prefix) x ...)
-       `((,(: prefix matrixrow))
+       `(,(: prefix matrixrow)
          ,(smathml x prefix)
          ...))))
 
@@ -545,9 +545,9 @@
        `(,(: prefix vector)
          ,(smathml x prefix)
          ...))
-      ((_ (:matrix x ...) prefix)
+      ((_ (:matrix (x ...) ...) prefix)
        `(,(: prefix matrix)
-         ,(smathml:matrixrow (prefix) x)
+         ,(smathml:matrixrow (prefix) x ...)
          ...))
       ((_ (:determinant x) prefix)
        (smathml:apply (prefix) determinant x))
