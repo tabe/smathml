@@ -156,6 +156,12 @@
                    :cos
                    :tan
                    :sec
+                   :csc
+                   :cot
+                   :sinh
+                   :cosh
+                   :tanh
+                   :sech
                    :csch
                    :coth
                    :arcsin
@@ -509,6 +515,12 @@
       ((_ (:cos x) prefix)     (smathml:apply (prefix) cos x))
       ((_ (:tan x) prefix)     (smathml:apply (prefix) tan x))
       ((_ (:sec x) prefix)     (smathml:apply (prefix) sec x))
+      ((_ (:csc x) prefix)     (smathml:apply (prefix) csc x))
+      ((_ (:cot x) prefix)     (smathml:apply (prefix) cot x))
+      ((_ (:sinh x) prefix)    (smathml:apply (prefix) sinh x))
+      ((_ (:cosh x) prefix)    (smathml:apply (prefix) cosh x))
+      ((_ (:tanh x) prefix)    (smathml:apply (prefix) tanh x))
+      ((_ (:sech x) prefix)    (smathml:apply (prefix) sech x))
       ((_ (:csch x) prefix)    (smathml:apply (prefix) csch x))
       ((_ (:coth x) prefix)    (smathml:apply (prefix) coth x))
       ((_ (:arcsin x) prefix)  (smathml:apply (prefix) arcsin x))

@@ -69,6 +69,8 @@
                 (:plus A B C))
 (assert-smathml '(m:apply (m:times) (m:apply (m:times) (m:ci "A") (m:ci "B")) (m:ci "C"))
                 (:times A B C))
+(assert-smathml '(m:apply (m:sinh) (m:cn "1"))
+                (:sinh 1))
 (assert-smathml '(m:apply (m:eq)(m:apply (m:ln) (m:exponentiale)) (m:cn "1"))
                 (:eq (:ln :exponentiale) 1))
 (assert-smathml '(m:matrix)
