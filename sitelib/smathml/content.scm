@@ -605,7 +605,7 @@
       ;; just apply
       ((_ (f x ...) prefix)
        `(,(: prefix apply)
-         (,(: prefix ci) ,(symbol->string 'f))
+         (,(: prefix csymbol) ,(symbol->string 'f))
          ,(smathml x prefix)
          ...))
       ;; token elements

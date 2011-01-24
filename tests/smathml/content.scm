@@ -63,7 +63,7 @@
                 (:diff (:bvar x) f))
 (assert-smathml '(m:apply (m:diff) (m:apply (m:diff) (m:ci "f")))
                 (:diff (:diff f)))
-(assert-smathml '(m:apply (m:ci "f") (m:ci "x") (m:ci "y"))
+(assert-smathml '(m:apply (m:csymbol "f") (m:ci "x") (m:ci "y"))
                 (f x y))
 (assert-smathml '(m:apply (m:minus) (m:apply (m:minus) (m:ci "A") (m:ci "B")) (m:ci "C"))
                 (:minus A B C))
