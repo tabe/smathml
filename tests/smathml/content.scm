@@ -20,6 +20,8 @@
 (assert-equal? '(apply (interval) (cn "0") (cn "1"))
                (smathml (:interval 0 1)))
 
+(assert-smathml '(m:csymbol "D")
+                (:csymbol D))
 (assert-smathml '(m:apply (m:interval) (m:cn "0") (m:cn "1"))
                 (:interval 0 1))
 (assert-smathml '(m:apply (m:inverse) (m:ci "f"))

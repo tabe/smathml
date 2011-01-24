@@ -73,7 +73,8 @@
   ;; - apply
   ;; - sep
   (define-syntax smathml
-    (syntax-rules (:interval
+    (syntax-rules (:csymbol
+                   :interval
                    :inverse
                    :condition
                    :declare
@@ -211,6 +212,8 @@
                    :eulergamma
                    :infinity)
       ;;; 4.4 The Content Markup Elements
+      ((_ (:csymbol name) prefix)
+       `(,(: prefix csymbol) ,(symbol->string 'name)))
       ;; basic content elements
       ((_ (:interval left right) prefix) ; two child elements that evaluate to real numbers
        (smathml:apply (prefix) interval left right))
